@@ -39,6 +39,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# XPath helper for case-insensitive text matching
+XPATH_LOWER_CASE = "translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')"
+
 
 class PokemonCenterBot:
     """Bot for monitoring and purchasing Pokemon trading cards."""
@@ -207,10 +210,9 @@ class PokemonCenterBot:
             # Try to find and click "Add to Cart" button
             try:
                 # Case-insensitive search for "add to cart" or "add to bag" buttons
-                xpath_lower = "translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')"
                 add_to_cart_button = WebDriverWait(self.driver, 10).until(
                     EC.presence_of_element_located((By.XPATH, 
-                        f"//button[contains({xpath_lower}, 'add to cart') or contains({xpath_lower}, 'add to bag')]"
+                        f"//button[contains({XPATH_LOWER_CASE}, 'add to cart') or contains({XPATH_LOWER_CASE}, 'add to bag')]"
                     ))
                 )
                 
@@ -255,7 +257,7 @@ class PokemonCenterBot:
             # Click checkout button
             checkout_button = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable((By.XPATH,
-                    "//button[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'checkout')]"))
+                    f"//button[contains({XPATH_LOWER_CASE}, 'checkout')]"))
             )
             checkout_button.click()
             time.sleep(3)
