@@ -6,6 +6,7 @@ from the Pokemon Center website.
 """
 
 import json
+import os
 import time
 import sys
 import logging
@@ -209,17 +210,23 @@ class PokemonCenterBot:
                     else:
                         logger.info(f"{Fore.YELLOW}Please complete checkout manually in the browser")
                         logger.info(f"{Fore.YELLOW}Press Ctrl+C to stop the bot when done")
-                        # Keep browser open
-                        while True:
-                            time.sleep(1)
+                        # Keep browser open for manual checkout
+                        try:
+                            while True:
+                                time.sleep(1)
+                        except KeyboardInterrupt:
+                            logger.info(f"{Fore.CYAN}Manual checkout completed or cancelled by user")
                 else:
                     logger.warning(f"{Fore.YELLOW}Add to Cart button is disabled")
                     
             except TimeoutException:
                 logger.warning(f"{Fore.YELLOW}Could not find 'Add to Cart' button")
                 logger.info(f"{Fore.YELLOW}Browser will remain open for manual action")
-                while True:
-                    time.sleep(1)
+                try:
+                    while True:
+                        time.sleep(1)
+                except KeyboardInterrupt:
+                    logger.info(f"{Fore.CYAN}Manual action completed or cancelled by user")
                     
         except Exception as e:
             logger.error(f"{Fore.RED}Error during checkout attempt: {e}")
@@ -253,14 +260,20 @@ class PokemonCenterBot:
             logger.info(f"{Fore.YELLOW}Please complete checkout manually")
             
             # Keep browser open for manual completion
-            while True:
-                time.sleep(1)
+            try:
+                while True:
+                    time.sleep(1)
+            except KeyboardInterrupt:
+                logger.info(f"{Fore.CYAN}Manual checkout completed or cancelled by user")
                 
         except Exception as e:
             logger.error(f"{Fore.RED}Error during checkout: {e}")
             logger.info(f"{Fore.YELLOW}Browser will remain open for manual completion")
-            while True:
-                time.sleep(1)
+            try:
+                while True:
+                    time.sleep(1)
+            except KeyboardInterrupt:
+                logger.info(f"{Fore.CYAN}Manual completion or cancelled by user")
     
     def monitor_and_purchase(self):
         """Main loop to monitor products and attempt purchase when available."""
@@ -334,7 +347,6 @@ def main():
     print(f"{Style.RESET_ALL}\n")
     
     # Check if config exists
-    import os
     if not os.path.exists('config.json'):
         print(f"{Fore.RED}Error: config.json not found!")
         print(f"{Fore.YELLOW}Please copy config.example.json to config.json and update with your details")
