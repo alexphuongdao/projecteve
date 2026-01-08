@@ -213,7 +213,7 @@ class PokemonCenterBot:
                         # Keep browser open for manual checkout
                         try:
                             while True:
-                                time.sleep(1)
+                                time.sleep(10)  # Check every 10 seconds
                         except KeyboardInterrupt:
                             logger.info(f"{Fore.CYAN}Manual checkout completed or cancelled by user")
                 else:
@@ -224,7 +224,7 @@ class PokemonCenterBot:
                 logger.info(f"{Fore.YELLOW}Browser will remain open for manual action")
                 try:
                     while True:
-                        time.sleep(1)
+                        time.sleep(10)  # Check every 10 seconds
                 except KeyboardInterrupt:
                     logger.info(f"{Fore.CYAN}Manual action completed or cancelled by user")
                     
@@ -262,7 +262,7 @@ class PokemonCenterBot:
             # Keep browser open for manual completion
             try:
                 while True:
-                    time.sleep(1)
+                    time.sleep(10)  # Check every 10 seconds
             except KeyboardInterrupt:
                 logger.info(f"{Fore.CYAN}Manual checkout completed or cancelled by user")
                 
@@ -271,7 +271,7 @@ class PokemonCenterBot:
             logger.info(f"{Fore.YELLOW}Browser will remain open for manual completion")
             try:
                 while True:
-                    time.sleep(1)
+                    time.sleep(10)  # Check every 10 seconds
             except KeyboardInterrupt:
                 logger.info(f"{Fore.CYAN}Manual completion or cancelled by user")
     
