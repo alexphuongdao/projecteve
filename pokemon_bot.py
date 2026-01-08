@@ -54,7 +54,7 @@ class PokemonCenterBot:
         self.driver = None
         self.session = requests.Session()
         self.session.headers.update({
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         })
         
     def _load_config(self, config_path: str) -> Dict:
@@ -94,6 +94,20 @@ class PokemonCenterBot:
             except Exception as e:
                 logger.error(f"{Fore.RED}Failed to initialize WebDriver: {e}")
                 raise
+    
+    def _wait_for_user_interrupt(self, message: str = "Waiting for user action..."):
+        """
+        Wait indefinitely for user to complete manual action.
+        Can be interrupted with Ctrl+C (KeyboardInterrupt).
+        
+        Args:
+            message: Optional message to log when interrupted
+        """
+        try:
+            while True:
+                time.sleep(10)  # Check every 10 seconds
+        except KeyboardInterrupt:
+            logger.info(f"{Fore.CYAN}{message}")
     
     def check_product_availability(self) -> List[Dict]:
         """
@@ -192,9 +206,11 @@ class PokemonCenterBot:
             
             # Try to find and click "Add to Cart" button
             try:
+                # Case-insensitive search for "add to cart" or "add to bag" buttons
+                xpath_lower = "translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')"
                 add_to_cart_button = WebDriverWait(self.driver, 10).until(
                     EC.presence_of_element_located((By.XPATH, 
-                        "//button[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'add to cart') or contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'add to bag')]"
+                        f"//button[contains({xpath_lower}, 'add to cart') or contains({xpath_lower}, 'add to bag')]"
                     ))
                 )
                 
@@ -211,22 +227,14 @@ class PokemonCenterBot:
                         logger.info(f"{Fore.YELLOW}Please complete checkout manually in the browser")
                         logger.info(f"{Fore.YELLOW}Press Ctrl+C to stop the bot when done")
                         # Keep browser open for manual checkout
-                        try:
-                            while True:
-                                time.sleep(10)  # Check every 10 seconds
-                        except KeyboardInterrupt:
-                            logger.info(f"{Fore.CYAN}Manual checkout completed or cancelled by user")
+                        self._wait_for_user_interrupt("Manual checkout completed or cancelled by user")
                 else:
                     logger.warning(f"{Fore.YELLOW}Add to Cart button is disabled")
                     
             except TimeoutException:
                 logger.warning(f"{Fore.YELLOW}Could not find 'Add to Cart' button")
                 logger.info(f"{Fore.YELLOW}Browser will remain open for manual action")
-                try:
-                    while True:
-                        time.sleep(10)  # Check every 10 seconds
-                except KeyboardInterrupt:
-                    logger.info(f"{Fore.CYAN}Manual action completed or cancelled by user")
+                self._wait_for_user_interrupt("Manual action completed or cancelled by user")
                     
         except Exception as e:
             logger.error(f"{Fore.RED}Error during checkout attempt: {e}")
@@ -260,20 +268,12 @@ class PokemonCenterBot:
             logger.info(f"{Fore.YELLOW}Please complete checkout manually")
             
             # Keep browser open for manual completion
-            try:
-                while True:
-                    time.sleep(10)  # Check every 10 seconds
-            except KeyboardInterrupt:
-                logger.info(f"{Fore.CYAN}Manual checkout completed or cancelled by user")
+            self._wait_for_user_interrupt("Manual checkout completed or cancelled by user")
                 
         except Exception as e:
             logger.error(f"{Fore.RED}Error during checkout: {e}")
             logger.info(f"{Fore.YELLOW}Browser will remain open for manual completion")
-            try:
-                while True:
-                    time.sleep(10)  # Check every 10 seconds
-            except KeyboardInterrupt:
-                logger.info(f"{Fore.CYAN}Manual completion or cancelled by user")
+            self._wait_for_user_interrupt("Manual completion or cancelled by user")
     
     def monitor_and_purchase(self):
         """Main loop to monitor products and attempt purchase when available."""
