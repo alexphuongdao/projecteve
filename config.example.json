@@ -1,0 +1,24 @@
+{
+  "target_url": "https://www.pokemoncenter.com/category/trading-card-game",
+  "check_interval_seconds": 30,
+  "target_products": [
+    "Booster Box",
+    "Elite Trainer Box",
+    "Collection Box"
+  ],
+  "max_price": 200.0,
+  "notification_enabled": true,
+  "auto_checkout": false,
+  "user_info": {
+    "email": "your-email@example.com",
+    "first_name": "FirstName",
+    "last_name": "LastName",
+    "address": "123 Main St",
+    "city": "City",
+    "state": "ST",
+    "zip": "12345",
+    "phone": "555-555-5555"
+  },
+  "headless": false,
+  "timeout_seconds": 10
+}
